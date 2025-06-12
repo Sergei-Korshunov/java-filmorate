@@ -15,31 +15,27 @@ import java.util.*;
 @RequestMapping("/films")
 public class FilmController {
     private Map<Long, Film> films = new HashMap<>();
-    private long countId = 1;
+    private long countId = 0;
 
     @PostMapping
-    public Film addFilm(@Valid @RequestBody Film newFilm) {
-        newFilm.setId(countId++);
-        films.put(countId, newFilm);
-        log.info("Добавлен фильм '{}'", newFilm.getName());
+    public Film addFilm(@Valid @RequestBody Film film) {
+        film.setId(++countId);
+        films.put(film.getId(), film);
+        log.info("Добавлен фильм '{}'", film.getName());
 
-        return newFilm;
+        return film;
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film updateFilm) {
-        if (!films.containsKey(updateFilm.getId()))
-            throw new NotFoundException("Фильм с указанным id (" + updateFilm.getId() + ") не найден");
+    public Film updateFilm(@Valid @RequestBody Film film) {
+        if (!films.containsKey(film.getId()))
+            throw new NotFoundException("Фильм с указанным id (" + film.getId() + ") не найден");
 
-        Film newFilm = films.get(updateFilm.getId());
-        newFilm.setName(updateFilm.getName());
-        newFilm.setDescription(updateFilm.getDescription());
-        newFilm.setReleaseDate(updateFilm.getReleaseDate());
-        newFilm.setDuration(updateFilm.getDuration());
+        films.put(film.getId(), film);
 
-        log.info("Обнавлен фильм '{}'", updateFilm.getName());
+        log.info("Обнавлен фильм '{}'", film.getName());
 
-        return newFilm;
+        return film;
     }
 
     @GetMapping

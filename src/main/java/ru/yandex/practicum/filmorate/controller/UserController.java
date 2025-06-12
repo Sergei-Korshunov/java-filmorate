@@ -18,33 +18,29 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
     private Map<Long, User> users = new HashMap<>();
-    private long countId = 1;
+    private long countId = 0;
 
     @PostMapping
-    public User addUser(@Valid  @RequestBody User newUser) {
-        newUser.setId(countId++);
-        checkUserForName(newUser);
-        users.put(countId, newUser);
-        log.info("Добален новый пользователь по имени {}", newUser.getName());
+    public User addUser(@Valid  @RequestBody User user) {
+        user.setId(++countId);
+        checkUserForName(user);
+        users.put(user.getId(), user);
+        log.info("Добален новый пользователь по имени {}", user.getName());
 
-        return newUser;
+        return user;
     }
 
     @PutMapping
-    public User updateUser(@Valid @RequestBody User updateUser) {
-        if (!users.containsKey(updateUser.getId()))
-            throw new NotFoundException("Пользователь с указанным id (" + updateUser.getId() + ") не найден");
+    public User updateUser(@Valid @RequestBody User user) {
+        if (!users.containsKey(user.getId()))
+            throw new NotFoundException("Пользователь с указанным id (" + user.getId() + ") не найден");
 
-        User newUser = users.get(updateUser.getId());
-        newUser.setLogin(updateUser.getLogin());
-        newUser.setName(updateUser.getName());
-        newUser.setEmail(updateUser.getEmail());
-        newUser.setBirthday(updateUser.getBirthday());
-        checkUserForName(newUser);
+        checkUserForName(user);
+        users.put(user.getId(), user);
 
-        log.info("Обнавлен пользователь с именим {}", updateUser.getName());
+        log.info("Обнавлен пользователь с именим {}", user.getName());
 
-        return updateUser;
+        return user;
     }
 
     @GetMapping
