@@ -33,7 +33,7 @@ public class FilmController {
 
         films.put(film.getId(), film);
 
-        log.info("Обнавлен фильм '{}'", film.getName());
+        log.info("Обновлен фильм '{}'", film.getName());
 
         return film;
     }

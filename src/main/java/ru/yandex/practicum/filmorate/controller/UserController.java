@@ -25,7 +25,7 @@ public class UserController {
         user.setId(++countId);
         checkUserForName(user);
         users.put(user.getId(), user);
-        log.info("Добален новый пользователь по имени {}", user.getName());
+        log.info("Добавлен новый пользователь по имени {}", user.getName());
 
         return user;
     }
@@ -38,7 +38,7 @@ public class UserController {
         checkUserForName(user);
         users.put(user.getId(), user);
 
-        log.info("Обнавлен пользователь с именим {}", user.getName());
+        log.info("Обновлен пользователь с именем {}", user.getName());
 
         return user;
     }

@@ -17,19 +17,19 @@ import java.time.LocalDate;
 @Data
 public class Film {
 
-    @PositiveOrZero(message = "ID не должен быть отрицательным числом.")
+    @PositiveOrZero(message = "ID не должен быть отрицательным числом")
     private long id;
 
-    @NotBlank(message = "Название не должно быть пустым.")
+    @NotBlank(message = "Название не должно быть пустым")
     private String name;
 
-    @Size(max = 200, message = "Максимальная длина описания не должна превышать двухста символов.")
+    @Size(max = 200, message = "Максимальная длина описания не должна превышать двухсот символов")
     private String description;
 
     @DateValidation
     private LocalDate releaseDate;
 
-    @Positive(message = "Продолжительность фильма не может быть отрицательным числом.")
+    @Positive(message = "Продолжительность фильма не может быть отрицательным числом")
     private int duration;
 
 }

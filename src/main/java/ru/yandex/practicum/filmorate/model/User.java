@@ -12,19 +12,20 @@ import java.time.LocalDate;
 @Data
 public class User {
 
-    @PositiveOrZero(message = "ID не должен быть отрицательным числом.")
+    @PositiveOrZero(message = "ID не должен быть отрицательным числом")
     private long id;
 
-    @NotBlank(message = "Электронная почта не долна быть пустой.")
-    @Email(message = "Некорректный E-mail адрес.")
+    @NotBlank(message = "Электронная почта не должна быть пустой")
+    @Email(message = "Некорректный E-mail адрес")
     private String email;
 
-    @NotBlank(message = "Логин не должен быть пустым.")
-    // @Pattern(regexp = "^[^\\s]+$", message = "Логин не должен содержать пробелы")
+    @NotBlank(message = "Логин не должен быть пустым")
+    @Pattern(regexp = "^[^\\s]+$", message = "Логин не должен содержать пробелы")
     private String login;
 
     private String name;
 
-    @PastOrPresent(message = "Дата рождения не может быть в будущем.")
+    @PastOrPresent(message = "Дата рождения не может быть в будущем")
+    @NotNull(message = "Дата рождения должна быть указана")
     private LocalDate birthday;
 }
