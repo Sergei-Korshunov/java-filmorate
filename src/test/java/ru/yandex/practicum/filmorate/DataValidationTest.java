@@ -144,7 +144,7 @@ public class DataValidationTest {
     void updateNonExistentUser() throws Exception {
         User user = new User();
         user.setId(1000);
-        user.setLogin("Login 1");
+        user.setLogin("Login1");
         user.setEmail("login1@mail.nety");
         user.setBirthday(LocalDate.now());
 
@@ -170,7 +170,7 @@ public class DataValidationTest {
     private User createCorrectUser() {
         User user = new User();
         user.setId(1);
-        user.setLogin("Login 1");
+        user.setLogin("Login1");
         user.setEmail("login1@mail.net");
         user.setBirthday(LocalDate.now());
 
