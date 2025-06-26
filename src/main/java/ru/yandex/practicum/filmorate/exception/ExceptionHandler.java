@@ -36,4 +36,12 @@ public class ExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ErrorMessage(exception.getMessage()));
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorMessage> validationException(ValidationException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(exception.getMessage()));
+    }
 }
