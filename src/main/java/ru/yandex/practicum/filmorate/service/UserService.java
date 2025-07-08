@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -28,11 +29,22 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        userExists(user.getId());
         return userStorage.updateUser(user);
     }
 
+    private User userExists(long id) {
+        User user = userStorage.getUserById(id);
+
+        if (user != null) {
+            return user;
+        }
+
+        throw new NotFoundException(String.format("Пользователь с указанным id - %s не найден", id));
+    }
+
     public User getUserById(long userId) {
-        return userStorage.getUserById(userId);
+        return userExists(userId);
     }
 
     public List<User> getListUsers() {
@@ -40,7 +52,7 @@ public class UserService {
     }
 
     public boolean removeUser(long userId) {
-        return userStorage.removeUser(userId);
+        return userStorage.removeUser(userExists(userId).getId());
     }
 
     public boolean addFriend(long userId, long friendId) {
@@ -51,7 +63,9 @@ public class UserService {
     }
 
     public List<User> getListFriends(long userId) {
-        return getUserById(userId).getFriends().stream().map(this::getUserById).collect(Collectors.toList());
+        return getUserById(userId).getFriends().stream()
+                .map(this::getUserById)
+                .collect(Collectors.toList());
     }
 
     public List<User> getListCommonFriends(long userId, long userOtherId) {

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -11,8 +12,8 @@ import java.util.List;
 
 @Service
 public class FilmService {
-    private UserService userService;
-    private FilmStorage filmStorage;
+    private final UserService userService;
+    private final FilmStorage filmStorage;
 
     @Autowired
     public FilmService(UserService userService, FilmStorage filmStorage) {
@@ -25,11 +26,29 @@ public class FilmService {
     }
 
     public Film updateFilm(Film film) {
+        filmExists(film.getId());
         return filmStorage.updateFilm(film);
     }
 
+    private Film filmExists(long id) {
+        Film film = filmStorage.getFilmById(id);
+
+        if (film != null) {
+            return film;
+        }
+
+        throw new NotFoundException(String.format("Фильм с указанным id - %s не найден", id));
+    }
+
     public Film getFilmById(long id) {
-        return filmStorage.getFilmById(id);
+        return filmExists(id);
+    }
+
+    public List<Film> getPopularFilms(long count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("Количество фильмов не может быть отрицательным числом");
+        }
+        return filmStorage.getPopularFilms(count);
     }
 
     public List<Film> getListFilm() {
@@ -37,7 +56,7 @@ public class FilmService {
     }
 
     public boolean removeFilm(long id) {
-        return filmStorage.removeFilm(id);
+        return filmStorage.removeFilm(filmExists(id).getId());
     }
 
     public boolean addLike(long filmId, long userId) {
@@ -60,9 +79,5 @@ public class FilmService {
         }
         throw new ValidationException(
                 String.format("Пользователь с id - %s не оценивал фильм '%s'", userId, film.getName()));
-    }
-
-    public List<Film> getPopularFilms(long count) {
-        return filmStorage.getPopularFilms(count);
     }
 }

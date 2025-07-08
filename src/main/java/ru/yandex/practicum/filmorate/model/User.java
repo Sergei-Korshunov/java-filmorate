@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import java.util.Set;
  * User
  */
 @Data
+@AllArgsConstructor
 public class User {
 
     @PositiveOrZero(message = "ID не должен быть отрицательным числом")
@@ -32,4 +34,16 @@ public class User {
     private LocalDate birthday;
 
     private Set<Long> friends = new HashSet<>();
+
+    public User() {
+    }
+
+    public User(User user) {
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.login = user.getLogin();
+        this.name = user.getName();
+        this.birthday = user.getBirthday();
+        this.friends = user.getFriends();
+    }
 }
