@@ -10,6 +10,8 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.annotation.DateValidation;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -31,5 +33,7 @@ public class Film {
 
     @Positive(message = "Продолжительность фильма не может быть отрицательным числом")
     private int duration;
+
+    private Set<Long> likes = new HashSet<>();
 
 }

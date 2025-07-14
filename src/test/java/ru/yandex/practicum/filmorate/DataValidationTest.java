@@ -7,17 +7,22 @@ import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -26,6 +31,12 @@ public class DataValidationTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @MockBean
+    private FilmService filmService;
+
+    @MockBean
+    private UserService userService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -47,6 +58,8 @@ public class DataValidationTest {
 
     @Test
     void postCorrectFilm() throws Exception {
+        when(filmService.addFilm(correctFilm)).thenReturn(correctFilm);
+
         ResultActions resultActions = mockMvc.perform(post("/films")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(correctFilm)));
@@ -75,6 +88,9 @@ public class DataValidationTest {
         updateNonExistentFilm.setDescription("New description 1");
         updateNonExistentFilm.setDuration(120);
         updateNonExistentFilm.setReleaseDate(LocalDate.now());
+
+        when(filmService.updateFilm(updateNonExistentFilm)).thenThrow(
+                new NotFoundException(String.format("Фильм с id - %s не найден", updateNonExistentFilm.getId())));
 
         ResultActions resultActions = mockMvc.perform(put("/films")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -118,6 +134,8 @@ public class DataValidationTest {
 
     @Test
     void postCorrectUser() throws Exception {
+        when(userService.addUser(correctUser)).thenReturn(correctUser);
+
         ResultActions resultActions = mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(correctUser))
@@ -147,6 +165,9 @@ public class DataValidationTest {
         user.setLogin("Login1");
         user.setEmail("login1@mail.nety");
         user.setBirthday(LocalDate.now());
+
+        when(userService.updateUser(user)).thenThrow(
+                new NotFoundException(String.format("Пользователь с id - %s не найден", user.getId())));
 
         ResultActions resultActions = mockMvc.perform(put("/users")
                 .contentType(MediaType.APPLICATION_JSON)
