@@ -1,24 +1,26 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.annotation.DateValidation;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Film.
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Film {
-
     @PositiveOrZero(message = "ID не должен быть отрицательным числом")
     private long id;
 
@@ -36,4 +38,8 @@ public class Film {
 
     private Set<Long> likes = new HashSet<>();
 
+    private Set<Genre> genres = new HashSet<>();
+
+    @NotNull(message = "Возрастной рейтинг не должен быть пустым")
+    private AgeRating mpa;
 }

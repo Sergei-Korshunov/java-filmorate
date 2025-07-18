@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.AgeRating;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.FilmService;
@@ -88,6 +89,7 @@ public class DataValidationTest {
         updateNonExistentFilm.setDescription("New description 1");
         updateNonExistentFilm.setDuration(120);
         updateNonExistentFilm.setReleaseDate(LocalDate.now());
+        updateNonExistentFilm.setMpa(new AgeRating(1, "G"));
 
         when(filmService.updateFilm(updateNonExistentFilm)).thenThrow(
                 new NotFoundException(String.format("Фильм с id - %s не найден", updateNonExistentFilm.getId())));
@@ -117,6 +119,7 @@ public class DataValidationTest {
         film.setDescription("Description 1");
         film.setDuration(120);
         film.setReleaseDate(LocalDate.now());
+        film.setMpa(new AgeRating(1, "G"));
 
         return film;
     }
