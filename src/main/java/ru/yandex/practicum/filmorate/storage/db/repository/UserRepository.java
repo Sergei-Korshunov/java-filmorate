@@ -95,7 +95,7 @@ public class UserRepository implements UserStorage {
         if (count > 0) {
             final String queryFriendshipVerification  = "SELECT status FROM friends WHERE user_id = ? AND friend_id = ?";
             FriendshipStatus friendshipStatus =
-                    jdbc.queryForObject(queryFriendshipVerification , new FriendshipStatusMapper(), userId, friendId);
+                    jdbc.queryForObject(queryFriendshipVerification, new FriendshipStatusMapper(), userId, friendId);
 
             if (friendshipStatus != null) {
                 switch (friendshipStatus) {
