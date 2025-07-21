@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -13,7 +11,6 @@ import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Service
 public class UserService {
     @Qualifier("userRepository")
@@ -34,13 +31,9 @@ public class UserService {
     }
 
     private User userExists(long id) {
-        Optional<User> user = userStorage.getUserById(id);
-
-        if (user.isPresent()) {
-            return user.get();
-        }
-
-        throw new NotFoundException(String.format("Пользователь с указанным id - %s не найден", id));
+        return userStorage.getUserById(id)
+                .orElseThrow(() ->
+                        new NotFoundException(String.format("Пользователь с указанным id - %s не найден", id)));
     }
 
     public User getUserById(long userId) {
@@ -52,7 +45,9 @@ public class UserService {
     }
 
     public boolean removeUser(long userId) {
-        return userStorage.removeUser(userExists(userId).getId());
+        long id = userExists(userId).getId();
+
+        return userStorage.removeUser(id);
     }
 
     public boolean addFriend(long userId, long friendId) {

@@ -9,11 +9,11 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.AgeRatingStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FilmService {
@@ -21,15 +21,21 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final GenreStorage genreStorage;
     private final AgeRatingStorage ageRatingStorage;
+    private final LikeStorage likeStorage;
     @Qualifier("userRepository")
     private final UserStorage userStorage;
 
     @Autowired
-    public FilmService(@Qualifier("filmRepository") FilmStorage filmStorage, GenreStorage genreStorage,
-                       AgeRatingStorage ageRatingStorage, @Qualifier("userRepository") UserStorage userStorage) {
+    public FilmService(
+            @Qualifier("filmRepository") FilmStorage filmStorage,
+            GenreStorage genreStorage,
+            AgeRatingStorage ageRatingStorage,
+            LikeStorage likeStorage,
+            @Qualifier("userRepository") UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.genreStorage = genreStorage;
         this.ageRatingStorage = ageRatingStorage;
+        this.likeStorage = likeStorage;
         this.userStorage = userStorage;
     }
 
@@ -41,14 +47,14 @@ public class FilmService {
 
     private void validateDataFilm(Film film) {
         ageRatingStorage.getAgeRatingById(film.getMpa().getId())
-                .orElseThrow(() -> new NotFoundException(
-                        String.format("Возрастной рейтинг с id - %s не найден", film.getMpa().getId())));
+                .orElseThrow(() ->
+                        new NotFoundException(String.format("Рейтинг с id - %s не найден.", film.getMpa().getId())));
 
         if (film.getGenres() != null) {
             for (Genre genre : film.getGenres()) {
                 genreStorage.getGenreById(genre.getId())
-                        .orElseThrow(() -> new NotFoundException(
-                                String.format("Жанр с id - %s не найден", genre.getId())));
+                        .orElseThrow(() ->
+                                new NotFoundException(String.format("Жанр с id - %s не найден.", genre.getId())));
             }
         }
     }
@@ -61,17 +67,16 @@ public class FilmService {
     }
 
     private Film filmExists(long id) {
-        Optional<Film> film = filmStorage.getFilmById(id);
-
-        if (film.isPresent()) {
-            return film.get();
-        }
-
-        throw new NotFoundException(String.format("Фильм с указанным id - %s не найден", id));
+        return filmStorage.getFilmById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Фильм с указанным id - %s не найден", id)));
     }
 
-    public Film getFilmById(long id) {
-        return filmExists(id);
+    public Film getFilmById(long filmId) {
+        Film film = filmExists(filmId);
+        film.setGenres(genreStorage.getGenresForFilm(film));
+        film.setLikes(likeStorage.getLikesByFilmId(filmId));
+
+        return film;
     }
 
     public List<Film> getPopularFilms(long count) {
@@ -79,11 +84,27 @@ public class FilmService {
             throw new IllegalArgumentException("Количество фильмов не может быть отрицательным числом");
         }
 
-        return filmStorage.getPopularFilms(count);
+        List<Film> films = filmStorage.getPopularFilms(count);
+        Map<Long, Set<Genre>> genres = genreStorage.getGenresForAllFilms();
+
+        for (Film film : films) {
+            film.setGenres(genres.get(film.getId()));
+            film.setLikes(likeStorage.getLikesByFilmId(film.getId()));
+        }
+
+        return films;
     }
 
     public List<Film> getListFilm() {
-        return filmStorage.getListFilms();
+        List<Film> films = filmStorage.getListFilms();
+        Map<Long, Set<Genre>> genres = genreStorage.getGenresForAllFilms();
+
+        for (Film film : films) {
+            film.setGenres(genres.get(film.getId()));
+            film.setLikes(likeStorage.getLikesByFilmId(film.getId()));
+        }
+
+        return films;
     }
 
     public boolean removeFilm(long id) {
