@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
+@Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
 
     private final Map<Long, Film> films = new HashMap<>();
@@ -30,8 +30,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(long id) {
-        return films.get(id);
+    public Optional<Film> getFilmById(long id) {
+        return Optional.of(films.get(id));
     }
 
     @Override
@@ -50,5 +50,15 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public boolean removeFilm(long id) {
         return films.remove(id) != null;
+    }
+
+    @Override
+    public boolean addLike(long filmId, long userId) {
+        return false;
+    }
+
+    @Override
+    public boolean removeLike(long filmId, long userId) {
+        return false;
     }
 }

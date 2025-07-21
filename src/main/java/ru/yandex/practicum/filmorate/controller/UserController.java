@@ -56,7 +56,7 @@ public class UserController {
 
     @PutMapping("/{id}/friends/{friendId}")
     public boolean addFriend(@PathVariable long id, @PathVariable long friendId) {
-        log.info("Пользователь с id - {} добавил в друзья пользователя с id - {}", id, friendId);
+        log.info("Пользователь с id - {} отправил запрос в друзья к пользователю с id - {}", id, friendId);
         return userService.addFriend(id, friendId);
     }
 

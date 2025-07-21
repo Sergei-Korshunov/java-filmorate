@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -14,8 +15,8 @@ import java.util.Set;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
-
     @PositiveOrZero(message = "ID не должен быть отрицательным числом")
     private long id;
 
@@ -34,16 +35,4 @@ public class User {
     private LocalDate birthday;
 
     private Set<Long> friends = new HashSet<>();
-
-    public User() {
-    }
-
-    public User(User user) {
-        this.id = user.getId();
-        this.email = user.getEmail();
-        this.login = user.getLogin();
-        this.name = user.getName();
-        this.birthday = user.getBirthday();
-        this.friends = user.getFriends();
-    }
 }

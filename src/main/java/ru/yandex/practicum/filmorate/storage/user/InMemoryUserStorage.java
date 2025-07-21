@@ -6,13 +6,10 @@ import org.springframework.stereotype.Component;
 
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
-@Component
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
 
     private Map<Long, User> users = new HashMap<>();
@@ -42,8 +39,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(long id) {
-        return users.get(id);
+    public Optional<User> getUserById(long id) {
+        return Optional.of(users.get(id));
     }
 
     @Override
@@ -54,5 +51,25 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public boolean removeUser(long id) {
         return users.remove(id) != null;
+    }
+
+    @Override
+    public boolean addFriend(long userId, long friendId) {
+        return false;
+    }
+
+    @Override
+    public List<User> getListFriends(long userId) {
+        return null;
+    }
+
+    @Override
+    public List<User> getListCommonFriends(long userId, long userOtherId) {
+        return null;
+    }
+
+    @Override
+    public boolean removeFriend(long userId, long friendId) {
+        return false;
     }
 }
