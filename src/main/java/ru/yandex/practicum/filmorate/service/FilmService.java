@@ -86,10 +86,11 @@ public class FilmService {
 
         List<Film> films = filmStorage.getPopularFilms(count);
         Map<Long, Set<Genre>> genres = genreStorage.getGenresForAllFilms();
+        Map<Long, Set<Long>> hashSetUserIdWithFilmId = likeStorage.getLikesForAllFilms();
 
         for (Film film : films) {
             film.setGenres(genres.get(film.getId()));
-            film.setLikes(likeStorage.getLikesByFilmId(film.getId()));
+            film.setLikes(hashSetUserIdWithFilmId.get(film.getId()));
         }
 
         return films;
@@ -98,10 +99,11 @@ public class FilmService {
     public List<Film> getListFilm() {
         List<Film> films = filmStorage.getListFilms();
         Map<Long, Set<Genre>> genres = genreStorage.getGenresForAllFilms();
+        Map<Long, Set<Long>> hashSetUserIdWithFilmId = likeStorage.getLikesForAllFilms();
 
         for (Film film : films) {
             film.setGenres(genres.get(film.getId()));
-            film.setLikes(likeStorage.getLikesByFilmId(film.getId()));
+            film.setLikes(hashSetUserIdWithFilmId.get(film.getId()));
         }
 
         return films;

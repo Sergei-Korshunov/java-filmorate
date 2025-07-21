@@ -8,9 +8,7 @@ import ru.yandex.practicum.filmorate.model.Like;
 import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.db.mappers.LikeMapper;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 public class LikeRepository implements LikeStorage {
@@ -30,5 +28,18 @@ public class LikeRepository implements LikeStorage {
         likes.forEach(like -> userIdHashSet.add(like.getUserId()));
 
         return userIdHashSet;
+    }
+
+    @Override
+    public Map<Long, Set<Long>> getLikesForAllFilms() {
+        String queryToGetLikes = "SELECT * FROM likes";
+        List<Like> likes = jdbc.query(queryToGetLikes, new LikeMapper());
+
+        Map<Long, Set<Long>> hashSetUserIdWithFilmId = new HashMap<>();
+        likes.forEach(like -> {
+            hashSetUserIdWithFilmId.computeIfAbsent(like.getFilmId(), aLong -> new HashSet<>()).add(like.getUserId());
+        });
+
+        return hashSetUserIdWithFilmId;
     }
 }
